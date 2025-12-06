@@ -23,7 +23,7 @@ jobs:
           username: deployci4@zulfiqri.com
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
-          server-dir: /public_html/
+          server-dir: /home/zulh7811/public_html/
           local-dir: public/
           exclude: |
             **/.git*
@@ -41,7 +41,7 @@ jobs:
           username: deployci4@zulfiqri.com
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
-          server-dir: /ci4_app/
+          server-dir: /home/zulh7811/ci4_app/
           local-dir: ./
           exclude: |
             public/
