@@ -6,23 +6,49 @@ on:
       - main
 
 jobs:
-  ftp-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to FTP
+      ###############################################
+      # 1) DEPLOY PUBLIC KE public_html
+      ###############################################
+      - name: Deploy PUBLIC to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
           username: deployci4@zulfiqri.com
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/
           protocol: ftps
+          server-dir: /public_html/
+          local-dir: public/
           exclude: |
             **/.git*
             **/.github*
             **/tests*
-            **/writable/debugbar/*
+            vendor.zip
+
+      ###############################################
+      # 2) DEPLOY CORE CI4 KE ci4_app
+      ###############################################
+      - name: Deploy APP CORE to ci4_app folder
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.2
+        with:
+          server: ftp.zulfiqri.com
+          username: deployci4@zulfiqri.com
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          server-dir: /ci4_app/
+          local-dir: ./
+          exclude: |
+            public/
+            **/.git*
+            **/.github*
+            vendor.zip
+            builds/
+            tests/
+            README.md
+            spark
