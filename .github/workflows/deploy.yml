@@ -1,4 +1,4 @@
-name: Auto Deploy to FTP
+name: Auto Deploy CI4
 
 on:
   push:
@@ -13,42 +13,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      ###############################################
-      # 1) DEPLOY PUBLIC KE public_html
-      ###############################################
-      - name: Deploy PUBLIC to public_html
+      # =============================================================
+      # DEPLOY PUBLIC ke public_html
+      # =============================================================
+      - name: Upload PUBLIC to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
           username: deployci4@zulfiqri.com
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
-          server-dir: /home/zulh7811/public_html/
           local-dir: public/
+          server-dir: /public_html/
           exclude: |
             **/.git*
             **/.github*
-            **/tests*
-            vendor.zip
 
-      ###############################################
-      # 2) DEPLOY CORE CI4 KE ci4_app
-      ###############################################
-      - name: Deploy APP CORE to ci4_app folder
+      # =============================================================
+      # DEPLOY APP (kecuali vendor & env) ke folder ci4
+      # =============================================================
+      - name: Upload APP to ci4 folder
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
           username: deployci4@zulfiqri.com
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
-          server-dir: /home/zulh7811/ci4_app/
           local-dir: ./
+          server-dir: /ci4/
           exclude: |
-            public/
-            **/.git*
-            **/.github*
-            vendor.zip
-            builds/
-            tests/
-            README.md
-            spark
+            vendor/**
+            public/**
+            writable/**
+            .env
+            .git/**
+            .github/**
+            tests/**
