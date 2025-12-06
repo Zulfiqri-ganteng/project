@@ -1,4 +1,4 @@
-name: Auto Deploy CI4
+name: Auto Deploy to FTP
 
 on:
   push:
@@ -13,39 +13,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # =============================================================
-      # DEPLOY PUBLIC ke public_html
-      # =============================================================
-      - name: Upload PUBLIC to public_html
+      # ===============================
+      # 1️⃣ DEPLOY PUBLIC (untuk domain)
+      # ===============================
+
+      - name: Deploy PUBLIC to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
           username: deployci4@zulfiqri.com
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
-          local-dir: public/
-          server-dir: /public_html/
+          server-dir: /public_html/ # tujuan di hosting
+          local-dir: ./public/ # folder public di project
           exclude: |
             **/.git*
             **/.github*
+            **/vendor/*
+            **/writable/*
+            **/.env
 
-      # =============================================================
-      # DEPLOY APP (kecuali vendor & env) ke folder ci4
-      # =============================================================
-      - name: Upload APP to ci4 folder
+      # =======================================
+      # 2️⃣ DEPLOY CORE APP (ke folder ci4_app)
+      # =======================================
+
+      - name: Deploy APP CORE to ci4_app
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
           username: deployci4@zulfiqri.com
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
-          local-dir: ./
-          server-dir: /ci4/
+          server-dir: /ci4_app/
+          local-dir: ./ # root project VS Code
           exclude: |
-            vendor/**
-            public/**
-            writable/**
-            .env
-            .git/**
-            .github/**
-            tests/**
+            **/.git*
+            **/.github*
+            **/public/*
+            **/vendor/*
+            **/writable/*
+            **/.env
+            spark
+            build

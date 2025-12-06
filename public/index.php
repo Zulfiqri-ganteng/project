@@ -3,52 +3,71 @@
 use CodeIgniter\Boot;
 use Config\Paths;
 
-// Minimum PHP Version
+// -----------------------------------------
+//  Minimal PHP Version
+// -----------------------------------------
 $minPhpVersion = '8.1';
 if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
     echo "PHP version must be {$minPhpVersion} or higher.";
     exit(1);
 }
 
-// ---------------------------------------------------------
-// AUTO DETECT ENVIRONMENT (LOCAL XAMPP / HOSTING CPANEL)
-// ---------------------------------------------------------
-
+// -----------------------------------------
+//  Base Path
+// -----------------------------------------
 define('FCPATH', __DIR__ . DIRECTORY_SEPARATOR);
 
-$isLocal = PHP_OS_FAMILY === 'Windows';
+// -----------------------------------------
+//  Detect LOCAL (XAMPP) vs HOSTING (cPanel)
+// -----------------------------------------
+$isLocal = false;
 
-// LOCAL (XAMPP)
+if (
+    isset($_SERVER['SERVER_NAME']) &&
+    (
+        strpos($_SERVER['SERVER_NAME'], 'localhost') !== false ||
+        strpos($_SERVER['SERVER_NAME'], '127.0.0.1') !== false
+    )
+) {
+    $isLocal = true;
+}
+
+// -----------------------------------------
+//  Set Path to Paths.php
+// -----------------------------------------
+// LOCAL → pakai struktur default CodeIgniter
 if ($isLocal) {
     $pathsPath = realpath(FCPATH . '/../app/Config/Paths.php');
 }
-// HOSTING (CPANEL)
+// HOSTING → pakai folder ci4_app
 else {
     $pathsPath = realpath(FCPATH . '/../ci4_app/app/Config/Paths.php');
 }
 
-// Fallback jika tidak ditemukan
+// fallback jika file tidak ditemukan
 if (!is_file($pathsPath)) {
     $pathsPath = realpath(FCPATH . '/../app/Config/Paths.php');
 }
 
-// Load Paths.php
+// load Paths.php
 require $pathsPath;
 
-// Buat instance Paths
 $paths = new Paths();
 
-// ---------------------------------------------------------
-// Load CodeIgniter
-// ---------------------------------------------------------
-
-// LOCAL (vendor ada di root)
+// -----------------------------------------
+//  Load Boot.php berdasarkan LOCAL/HOSTING
+// -----------------------------------------
 if ($isLocal) {
-    require realpath(FCPATH . '/../vendor/codeigniter4/framework/system/Boot.php');
-}
-// HOSTING (vendor ada di ci4_app/vendor)
-else {
-    require realpath(FCPATH . '/../ci4_app/vendor/codeigniter4/framework/system/Boot.php');
+    // LOCAL (pakai vendor lokal)
+    $boot = realpath(FCPATH . '/../vendor/codeigniter4/framework/system/Boot.php');
+} else {
+    // HOSTING (vendor dipindah ke ci4_app/vendor)
+    $boot = realpath(FCPATH . '/../ci4_app/vendor/codeigniter4/framework/system/Boot.php');
 }
 
+require $boot;
+
+// -----------------------------------------
+//  Jalankan aplikasi
+// -----------------------------------------
 exit(Boot::bootWeb($paths));
