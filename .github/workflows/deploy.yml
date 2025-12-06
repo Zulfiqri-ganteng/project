@@ -1,4 +1,5 @@
 name: Auto Deploy to FTP
+
 on:
   push:
     branches:
@@ -12,36 +13,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # ============================
-      # Upload folder PUBLIC
-      # ============================
+      # 1️⃣ Deploy isi folder PUBLIC ke /public_html
       - name: Deploy PUBLIC to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: public
-          server-dir: public_html
           protocol: ftps
+          local-dir: public/ # ← HARUS ADA / DI BELAKANGNYA !!!
+          server-dir: /public_html/
           exclude: |
             **/.git*
             **/.github*
+            **/tests*
+            **/vendor*
+            composer.*
 
-      # ============================
-      # Upload file yang berubah dari folder APP
-      # (BUKAN full folder!)
-      # ============================
+      # 2️⃣ Deploy folder APP (diff only) ke ci4_app/app
       - name: Deploy APP to ci4_app/app (diff only)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: app
-          server-dir: ci4_app/app
           protocol: ftps
+          local-dir: app/
+          server-dir: /ci4_app/app/
           exclude: |
-            **/Cache/*
-            **/Logs/*
-            **/Sessions/*
+            **/Config/Paths.php
+            **/Config/Boot/*
