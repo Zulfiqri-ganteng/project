@@ -1,71 +1,24 @@
-#========================================
-# SYSTEM / OS JUNK FILES
-#========================================
+# ignore environment
+.env
+
+# ignore vendor dependencies
+vendor/
+
+# ignore IDE
+.vscode/
+.idea/
+
+# ignore system junk
 .DS_Store
 Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-*.cab
-*.msi
-*.msm
-*.msp
-*.lnk
-*~
-.directory
-.Trash-*
 
-#========================================
-# IGNORE DEVELOPMENT ENV FILES (AMAN)
-#========================================
-.vagrant
-Vagrantfile
-
-#========================================
-# ALLOW .env TO BE INCLUDED (JIKA MAU OTOMATIS)
-#========================================
-# (JANGAN DIHAPUS baris ini)
-# .env TIDAK di-ignore → ikut naik GitHub → ikut upload ke hosting
-#========================================
-
-#========================================
-# WRITABLE — TETAP UPLOAD SEMUA
-#========================================
-# HANYA ignore file cache/log agar ringan (opsional)
+# ignore logs
 writable/cache/*
 !writable/cache/index.html
 
 writable/logs/*
 !writable/logs/index.html
 
-# SESSION & UPLOAD DIUPLOAD SEMUA
-# (hapus ignore yang lama)
-# writable/session/*
-# writable/uploads/*
-
-#========================================
-# TESTS (opsional)
-#========================================
-tests/coverage*
-phpunit
-
-#========================================
-# VENDOR — JANGAN IGNORE
-#========================================
-# (hapus baris vendor/)
-# vendor/
-
-#========================================
-# IDE FILES
-#========================================
-.idea/
-*.iml
-.vscode/
-
-#========================================
-# IGNORE CI4 build files
-#========================================
-builds/
-results/
-
-php_errors.log
+# ignore session cache
+writable/session/*
+!writable/session/index.html
