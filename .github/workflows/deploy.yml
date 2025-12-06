@@ -13,15 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Composer Dependencies
-        run: composer install --no-dev --prefer-dist --no-progress --no-interaction
-
-      - name: Create .env file for production
-        run: |
-          cp .env.example .env
-          echo "CI_ENVIRONMENT = production" >> .env
-          echo "app.baseURL = 'https://zulfiqri.com/'" >> .env
-
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
@@ -34,3 +25,4 @@ jobs:
             **/.git*
             **/.github*
             **/tests*
+            **/writable/debugbar/*
