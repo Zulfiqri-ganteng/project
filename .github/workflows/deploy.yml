@@ -1,5 +1,4 @@
 name: Auto Deploy to FTP
-
 on:
   push:
     branches:
@@ -13,45 +12,36 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # ===============================
-      # 1️⃣ DEPLOY PUBLIC (untuk domain)
-      # ===============================
-
+      # ============================
+      # Upload folder PUBLIC
+      # ============================
       - name: Deploy PUBLIC to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
-          username: deployci4@zulfiqri.com
+          username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: public
+          server-dir: public_html
           protocol: ftps
-          server-dir: /public_html/ # tujuan di hosting
-          local-dir: ./public/ # folder public di project
           exclude: |
             **/.git*
             **/.github*
-            **/vendor/*
-            **/writable/*
-            **/.env
 
-      # =======================================
-      # 2️⃣ DEPLOY CORE APP (ke folder ci4_app)
-      # =======================================
-
-      - name: Deploy APP CORE to ci4_app
+      # ============================
+      # Upload file yang berubah dari folder APP
+      # (BUKAN full folder!)
+      # ============================
+      - name: Deploy APP to ci4_app/app (diff only)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.2
         with:
           server: ftp.zulfiqri.com
-          username: deployci4@zulfiqri.com
+          username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: app
+          server-dir: ci4_app/app
           protocol: ftps
-          server-dir: /ci4_app/
-          local-dir: ./ # root project VS Code
           exclude: |
-            **/.git*
-            **/.github*
-            **/public/*
-            **/vendor/*
-            **/writable/*
-            **/.env
-            spark
-            build
+            **/Cache/*
+            **/Logs/*
+            **/Sessions/*
